@@ -36,7 +36,7 @@ class Atendimento {
 
       conexao.query(sql, atendimento, (erro, resultado) => {
         if (erro) response.status(400).json(erro);
-        else response.status(201).json(resultado);
+        else response.status(201).json(atendimento);
       })
     }
   }
@@ -73,7 +73,17 @@ class Atendimento {
     conexao.query(sql, [valores, id], (erro, resultado) => {
       if (erro) response.status(400).json(erro);
       else
-        response.status(200).json(resultado);
+        response.status(200).json({...valores,id});
+    })
+  }
+
+  deleta(id,response){
+    const sql = 'delete from atendimentos where id = ?';
+
+    conexao.query(sql,id,(erro, resultado) => {
+      if (erro) response.status(400).json(erro);
+      else
+        response.status(200).json({id});
     })
   }
 }
