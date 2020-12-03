@@ -8,8 +8,8 @@ module.exports = app => {
 
     const atendimento = request.body;
 
-    Atendimento.adiciona(atendimento);
-    response.send('POST atendimento')
+    Atendimento.adiciona(atendimento,response);
+    
   });
 
 }
