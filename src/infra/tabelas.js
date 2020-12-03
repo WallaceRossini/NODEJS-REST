@@ -6,7 +6,7 @@ class Tabelas {
     this.criarAtendimentos();
   }
   criarAtendimentos() {
-    const sql = `CREATE TABLE Atendimentos (
+    const sql = `CREATE TABLE if not exists Atendimentos (
       id int not null auto_increment, 
       cliente varchar(50) not null,
       pet varchar(20),
