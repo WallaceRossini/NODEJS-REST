@@ -1,3 +1,4 @@
+const { request, response } = require('express');
 const Atendimento = require('../models/atendimentos');
 
 module.exports = app => {
@@ -20,4 +21,10 @@ module.exports = app => {
     
   });
 
+  app.patch('/atendimentos/:id',(request, response) => {
+    const id = parseInt(request.params.id);
+    const valores = request.body;
+
+    Atendimento.altera(id,valores,response);
+  });
 }

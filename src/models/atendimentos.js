@@ -2,65 +2,80 @@ const moment = require('moment');
 const conexao = require('../infra/conexao');
 class Atendimento {
 
-  adiciona(atendimento,response){
+  adiciona(atendimento, response) {
 
-      const dataCriacao = new Date;
-      atendimento.data = moment(atendimento.data,'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS')
-      atendimento = {...atendimento,dataCriacao};
+    const dataCriacao = new Date;
+    atendimento.data = moment(atendimento.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS')
+    atendimento = { ...atendimento, dataCriacao };
 
-      const dataEhValida = moment(atendimento.data).isSameOrAfter(dataCriacao);
+    const dataEhValida = moment(atendimento.data).isSameOrAfter(dataCriacao);
 
-      const clienteEhValido = atendimento.cliente.length >=5;
+    const clienteEhValido = atendimento.cliente.length >= 5;
 
-      const validacoes = [
-        {
-          nome:'data',
-          valido: dataEhValida,
-          mensagem: 'Data deve ser maior ou igual a data atual'
-        },
-        {
-          nome:'cliente',
-          valido: clienteEhValido,
-          mensagem: 'Cliente deve ter pelo menos cinco caracteres'
-        }
-      ];
-
-      const erros = validacoes.filter(campo => !campo.valido);
-
-      const existemErros = erros.length;
-      
-      if(existemErros){
-        response.status(400).json(erros);
-      }else{
-        const sql = 'insert into Atendimentos set ?';
-
-        conexao.query(sql,atendimento, (erro,resultado) => {
-          if(erro) response.status(400).json(erro);
-          else response.status(201).json(resultado);
-        })
+    const validacoes = [
+      {
+        nome: 'data',
+        valido: dataEhValida,
+        mensagem: 'Data deve ser maior ou igual a data atual'
+      },
+      {
+        nome: 'cliente',
+        valido: clienteEhValido,
+        mensagem: 'Cliente deve ter pelo menos cinco caracteres'
       }
-  }
+    ];
 
-  lista(response){
-      const sql = 'select * from atendimentos';
+    const erros = validacoes.filter(campo => !campo.valido);
 
-      conexao.query(sql,(erro,resultado) => {
-         if(erro) response.status(400).json(erro);
-         else
-        response.status(200).json(resultado);
+    const existemErros = erros.length;
+
+    if (existemErros) {
+      response.status(400).json(erros);
+    } else {
+      const sql = 'insert into Atendimentos set ?';
+
+      conexao.query(sql, atendimento, (erro, resultado) => {
+        if (erro) response.status(400).json(erro);
+        else response.status(201).json(resultado);
       })
+    }
   }
 
-  buscaPorId(id,response){
+  lista(response) {
+    const sql = 'select * from atendimentos';
+
+    conexao.query(sql, (erro, resultado) => {
+      if (erro) response.status(400).json(erro);
+      else
+        response.status(200).json(resultado);
+    })
+  }
+
+  buscaPorId(id, response) {
     const sql = `select * from atendimentos where id = ${id}`;
 
-    conexao.query(sql,(erro,resultado) => {
+    conexao.query(sql, (erro, resultado) => {
       const atendimento = resultado[0];
-       if(erro) response.status(400).json(erro);
-       else
-      response.status(200).json(atendimento);
+      if (erro) response.status(400).json(erro);
+      else
+        response.status(200).json(atendimento);
     })
-}
+  }
+
+  altera(id, valores, response) {
+
+    if (valores.data) {
+      valores.data = moment(valores.data, 'DD/MM/YYYY').format('YYYY-MM-DD HH:MM:SS')
+    }
+
+    const sql = 'update atendimentos set ? where id = ?';
+
+    conexao.query(sql, [valores, id], (erro, resultado) => {
+      if (erro) response.status(400).json(erro);
+      else
+        response.status(200).json(resultado);
+    })
+  }
 }
 
 module.exports = new Atendimento;
